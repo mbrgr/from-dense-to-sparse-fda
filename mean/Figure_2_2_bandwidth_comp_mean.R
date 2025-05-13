@@ -1,5 +1,8 @@
 ##### source codes #####
-source("Mean Simulation/functions_mean.R")
+source("mean/functions_mean.R")
+
+##### results #####
+load("mean/data/mean_bw_comp.RData")
 
 ###### n = 600 ######
 N = 1000
@@ -46,7 +49,7 @@ erg.df |>
   slice_min(sup.err)
 
 
-#ggsave("mean/grafics/optimal_bw_comp_w_interp.png", device = "png", width = 5, height = 3.8, units = "in")
+ggsave("mean/grafics/optimal_bw_comp_w_interp.png", device = "png", width = 5, height = 3.8, units = "in")
 
 
 
@@ -81,7 +84,9 @@ erg_df_n100 |>
   filter(p %in% c(65, 115, 175, 275, 400, 550)) |>
   ggplot() + 
   geom_point(aes(x = h, y = sup.err, color = p, pch = p)) +
-  lims(y = c(0, 0.3)) +
+  lims(y = c(0, 0.35)) +
   labs(subtitle = "n = 100") 
 
-#ggsave("mean/grafics/optimal_bw_comp_w_interp_n100.png", device = "png", width = 5, height = 3.8, units = "in")
+ggsave("mean/grafics/optimal_bw_comp_w_interp_n100.png", device = "png", width = 5, height = 3.8, units = "in")
+
+save.image("mean/data/mean_bw_comp.RData")
