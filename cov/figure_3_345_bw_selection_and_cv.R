@@ -85,6 +85,7 @@ min_h_tibble = bw_comparison_tbl |>
 #   geom_line(aes(x = h, y = sup.err, col = p, linetype = p)) +
 #   ylim(c(0.03, 0.65)) + 
 #   labs(title = "n = 100") 
+save.image("cov/data/bw_comp_OU.RData")
 
 ##### One -Fold CV #####
 # not in paper
