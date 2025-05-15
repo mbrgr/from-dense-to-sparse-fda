@@ -2,6 +2,7 @@
 
 ##### source code #####
 source("mean/functions_mean.R")
+source("mean/functions_mean_derivative.R")
 
 ##### results #####
 load("mean/data/mean_error_decomposition.RData")
@@ -50,9 +51,10 @@ df.erg = rbind(df.erg.locpol, df.erg.interp, df.erg.spline)
 # Figure 2.5
 ggplot(df.erg[df.erg$term != "sup.err",], aes(p, sup.error, lty = term, pch = method, col = term)) + 
   geom_point() + geom_line() + labs(subtitle = "n = 600")  + 
-  lims(y = c(0, 0.16))
+  lims(y = c(0, 0.16)) + 
+  deriv_est_theme
 
-ggsave("mean/grafics/supErr_comp_interp_lp_spline.png", device = "png",
+ggsave("mean/grafics/supErr_comp_interp_lp_spline.pdf", device = "pdf",
        width = 5, height = 3.8, units = "in")
 
 # Figure 2.6
@@ -60,9 +62,10 @@ ggplot(df.erg[df.erg$term == "sup.err",],
        aes(p, sup.error, pch = method, lty = method, col = method)) + 
   geom_point() + geom_line() + 
   labs(subtitle = "n = 600") + 
-  lims(y = c(0, 0.16)) 
+  lims(y = c(0, 0.16))  + 
+  deriv_est_theme
 
-ggsave("supErrDecomp_comp_interp_lp_spline.pdf", device = "pdf",
+ggsave("mean/grafics/supErrDecomp_comp_interp_lp_spline.pdf", device = "pdf",
        width = 5, height = 3.8, units = "in")
 
 save.image("mean/data/mean_error_decomposition.RData")

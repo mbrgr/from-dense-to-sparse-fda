@@ -42,14 +42,15 @@ erg.df |>
   geom_point(aes(x = h, y = sup.err, color = p, pch = p)) +
   geom_point(aes(y = 0, x = cv_h, color = p, pch = p)) + 
   lims(y = c(0, 0.3)) +
-  labs(subtitle = "n = 600") 
+  labs(subtitle = "n = 600")  + 
+  deriv_est_theme
 
 erg.df |>  
   group_by(p) |> 
-  slice_min(sup.err)
+  slice_min(sup.err) # table 1
 
 
-ggsave("mean/grafics/optimal_bw_comp_w_interp.png", device = "png", width = 5, height = 3.8, units = "in")
+ggsave("mean/grafics/optimal_bw_comp_w_interp.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
 
 
@@ -85,8 +86,9 @@ erg_df_n100 |>
   ggplot() + 
   geom_point(aes(x = h, y = sup.err, color = p, pch = p)) +
   lims(y = c(0, 0.35)) +
-  labs(subtitle = "n = 100") 
+  labs(subtitle = "n = 100") + 
+  deriv_est_theme
 
-ggsave("mean/grafics/optimal_bw_comp_w_interp_n100.png", device = "png", width = 5, height = 3.8, units = "in")
+ggsave("mean/grafics/optimal_bw_comp_w_interp_n100.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
 save.image("mean/data/mean_bw_comp.RData")

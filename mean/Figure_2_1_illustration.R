@@ -1,13 +1,13 @@
 ##### Packages #####
-library(ggplot2)
-library(reshape2)
-library(locpol)
-library(interp)
-library(stats)
-library(future)
-library(future.apply)
-library(parallel)
-library(tidyverse)
+  library(ggplot2)
+  library(reshape2)
+  library(locpol)
+  library(interp)
+  library(stats)
+  library(future)
+  library(future.apply)
+  library(parallel)
+  library(tidyverse)
 
 ##### source codes #####
 source("mean/functions_mean_derivative.R")
@@ -75,7 +75,7 @@ ggplot() +
   labs(title = "Mean function", y = NULL, x = NULL, colour = NULL, lty = NULL) + 
   deriv_est_theme
 
-#ggsave("Grafics/mean_est_n10_p101.png", device = "png", width = 7, height = 3.8, units = "in")
+ggsave("mean/grafics/mean_est_n10_p101.pdf", device = "pdf", width = 5.5, height = 3.7, units = "in")
 
 ###### First Derivative ######
 
@@ -83,17 +83,25 @@ ggplot() +
 mu_deriv_tibble |> 
   ggplot() + 
   geom_line(aes(x = x, y = val, col = fun, lty = fun)) + 
-  scale_linetype_manual(values = c(1,2,4), 
-                        breaks = c("mu'", "deg = 2", "deg = 3"),
-                        labels = c("deg = 3" = "Cubic", 
-                                   'mu'   = expression(paste(mu,"'")),
-                                   "deg = 2" = "Quad")) + 
-  scale_colour_manual(values =  c("black", "green", "red"),
-                      breaks = c("mu'", "deg = 2", "deg = 3"),
-                      labels = c("deg = 3" = "Cubic", 
-                                 'mu'   = expression(paste(mu,"'")),
-                                 "deg = 2" = "Quad")) + 
+  scale_linetype_manual(
+    values = c(1, 2, 4),
+    breaks = c("mu'", "deg = 2", "deg = 3"),
+    labels = list(
+      "mu'" = expression(mu * "'"),
+      "deg = 2" = "Quad",
+      "deg = 3" = "Cubic"
+    )
+  ) + 
+  scale_colour_manual(
+    values = c("black", "green", "red"),
+    breaks = c("mu'", "deg = 2", "deg = 3"),
+    labels = list(
+      "mu'" = expression(mu * "'"),
+      "deg = 2" = "Quad",
+      "deg = 3" = "Cubic"
+    )
+  )  + 
   labs(title = "First derivative", y = NULL, x = NULL, colour = NULL, lty = NULL) + 
   deriv_est_theme
 
-#ggsave("Grafics/derivative_est_n10_p101.png", device = "png", width = 7, height = 3.8, units = "in")
+ggsave("mean/grafics/derivative_est_n10_p101.pdf", device = "pdf", width = 5.5, height = 3.7, units = "in")

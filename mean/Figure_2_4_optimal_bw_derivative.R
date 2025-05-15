@@ -39,10 +39,11 @@ erg_deg_2_df = data.frame(sup.err = unlist(erg_deg2), p =
 
 Figure24a = erg_deg_2_df |> filter(p %in% c(65, 115, 175, 275, 400, 550)) |> 
   ggplot(aes(x = h, y = sup.err, color = p, pch = p)) + 
-  geom_point() + labs(subtitle = "n = 600") + lims(y = c(0.5, 20)) + deriv_est_theme
+  geom_point() + labs(subtitle = "n = 600") + lims(y = c(0.5, 20)) +
+  deriv_est_theme
 Figure24a
 
-ggsave("mean/grafics/derivative_bandwidth_comparison_quad.png", device = "png", width = 5, height = 3.8, units = "in")
+ggsave("mean/grafics/derivative_bandwidth_comparison_quad.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
 ###### Degree = 3 ######
 set.seed(264) # same seed as for degree = 2
@@ -66,9 +67,10 @@ erg_deg_3_df = data.frame(sup.err = unlist(erg_deg3), p =
 # Local cubic estimator bandwidth comparison 
 Figure24b = erg_deg_3_df |> filter(p %in% c(65, 115, 175, 275, 400, 550)) |> 
   ggplot(aes(x = h, y = sup.err, color = p, pch = p)) + 
-  geom_point() + lims(y = c(0.5, 20)) + labs(subtitle = "n = 600") + deriv_est_theme
+  geom_point() + lims(y = c(0.5, 20)) + labs(subtitle = "n = 600") +
+  deriv_est_theme
 Figure24b 
-ggsave("mean/grafics/derivative_bandwidth_comparison_cubic.png", device = "png", width = 5, height = 3.8, units = "in")
+ggsave("mean/grafics/derivative_bandwidth_comparison_cubic.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
 erg_deg_2_df |> group_by(p) |> slice_min(sup.err)# results for table 2.1
 erg_deg_3_df |> group_by(p) |> slice_min(sup.err)

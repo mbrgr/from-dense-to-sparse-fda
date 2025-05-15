@@ -1,7 +1,10 @@
 ##### source codes #####
-source("Mean Simulation/functions_mean_derivative.R")
-source("Mean Simulation/functions_mean.R")
+source("mean/functions_mean_derivative.R")
+source("mean/functions_mean.R")
 # Figure 2.3 results from the leave-one-curve-out cross validation
+
+#### results ####
+load("mean/data/bw_cross_validation.RData")
 
 #### Figure 2.3 - Cross Validation ####
 ###### LOCOCV ######
@@ -27,7 +30,7 @@ cv.bw %>% dim()
 
 
 #save.image("mean/data/bw_cross_validation.RData")
-load("mean/data/bw_cross_validation.RData")
+
 
 cv.bw |> head()
 colnames(cv.bw)  = p
@@ -37,11 +40,11 @@ cv.bw |> as_tibble() |>
   ggplot() + 
   geom_boxplot(aes(p, h, color = p), alpha = .9, show.legend = F) + 
   labs(y = "sup.err", subtitle = "n = 600") + 
-  lims(y = c(0, 0.15))
-#theme_grey(base_size = 15) + 
-# theme(plot.title = element_text(size = 14))
+  lims(y = c(0.00, 0.155)) + 
+  deriv_est_theme
 
-ggsave("mean/grafics/cv_bw_comparison.png", width = 5, height = 3.8, units = "in")
+
+ggsave("mean/grafics/cv_bw_comparison.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
 cv.bw |> as_tibble() |> 
   pivot_longer(1:6, names_to = "p",values_to = "h") |> 
@@ -50,7 +53,9 @@ cv.bw |> as_tibble() |>
   summarise(avg = mean(h), med = median(h))
 
 
-###### k-fold cross validation ######
+#### k-fold cross validation ####
+##### results #####
+load("mean/data/bw_cross_validation_n100.RData")
 
 N = 1000
 n = 600
@@ -79,11 +84,10 @@ k_fold_cv_bw |> as_tibble() |>
   ggplot() + 
   geom_boxplot(aes(p, h, color = p), alpha = .9, show.legend = F) + 
   labs(y = "sup.err", subtitle = "n = 600") + 
-  lims(y = c(0, 0.15))
-#theme_grey(base_size = 15) + 
-# theme(plot.title = element_text(size = 14))
+  lims(y = c(0, 0.17)) + 
+  deriv_est_theme
 
-ggsave("mean/grafics/k_fold_cv_bw_comparison.png", width = 5, height = 3.8, units = "in")
+ggsave("mean/grafics/k_fold_cv_bw_comparison.pdf", width = 5, height = 3.8, units = "in")
 
 k_fold_cv_bw |> as_tibble() |> 
   pivot_longer(1:6, names_to = "p",values_to = "h") |> 
@@ -111,11 +115,12 @@ k_fold_cv_bw_n100 |> as_tibble() |>
   ggplot() + 
   geom_boxplot(aes(p, h, color = p), alpha = .9, show.legend = F) + 
   labs(y = "sup.err", subtitle = "n = 600") + 
-  lims(y = c(0, 0.2))
+  lims(y = c(0, 0.2))  + 
+  deriv_est_theme
 #theme_grey(base_size = 15) + 
 # theme(plot.title = element_text(size = 14))
 
-ggsave("mean/grafics/k_fold_cv_bw_comparison_n100.png", width = 5, height = 3.8, units = "in")
+ggsave("mean/grafics/k_fold_cv_bw_comparison_n100.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
 k_fold_cv_bw_n100 |> as_tibble() |> 
   pivot_longer(1:6, names_to = "p",values_to = "h") |> 
