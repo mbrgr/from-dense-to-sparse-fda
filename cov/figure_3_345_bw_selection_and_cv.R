@@ -13,6 +13,42 @@ load("cov/data/bw_comp_OU.RData")
 #  Figures 3.4, 3.5 and 3.6
 source("cov/functions.r")
 
+##### calculations #####
+N = 1000
+n.seq = c(50, 100, 200, 400)
+p.seq = c(15, 25, 50, 75, 100)
+# p.seq = 25
+
+p.eval = 100
+H = lapply(1:length(p.seq), function(l){seq(1, 3/p.seq[l], -0.05)})
+# H = lapply(1:length(p.seq), function(l){seq(.6, 3/p.seq[l], -0.2)})
+
+# Parameter OU Process
+theta = 2; sigma = 3
+# Standard deviation for additional errors
+sd = 0.75
+
+bw_comparison = list()
+
+cl = parallel::makeCluster(parallel::detectCores( ) - 1)
+future::plan(future::cluster)
+
+for(l in 1:length(p.seq)){
+  tic()
+  bw_comparison[[l]] = matrix(t(future_sapply(1:length(H[[l]]), FUN = function(k)
+  {
+    bandwidth_evaluation(H[[l]][k], p.seq[l], p.eval, n.seq, N, 
+                         cov_ou, list(theta = theta, sigma = sigma), 
+                         OU, list(alpha = theta, sigma = sigma, x0 = 0), 
+                         eps.arg = list(sd = sd))
+  },
+  future.seed = T)),ncol = 4)
+  cat("p =", p.seq[l], "done.")
+  toc()
+}
+
+parallel::stopCluster(cl)
+
 
 ##### Figure 3.3 #####
 bw_comparison_tbl = Reduce(rbind, bw_comparison) |>
