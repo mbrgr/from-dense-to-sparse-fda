@@ -2,8 +2,6 @@
 library(ggplot2)
 library(tidyverse)
 library(biLocPol)
-library(future.apply)
-library(tictoc)
 
 my_theme = theme_grey(base_size = 15) + 
   theme(plot.title = element_text(size = 14))
@@ -31,7 +29,7 @@ for(i in 1:length(n.seq)){
                                                       p.eval, parallel = T, 
                                                       m = 1, del = 0, 
                                                       parallel.environment = F)
-    error_decomp_arr[j,,i] = error_decomposition(weight, n.seq[i], N, parallel = T, Gamma = cov_ou, 
+    error_decomp_arr[j,,i] = error_decomposition(weight, n.seq[i], N, parallel = T, 
                                                  parallel.environment = F)
     cat("n =", n.seq[i], "and p =", p.seq[j], "done. ")
     toc()
