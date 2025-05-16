@@ -8,7 +8,8 @@ library(future)
 library(future.apply)
 library(parallel)
 library(tidyverse)
-
+deriv_est_theme = theme_grey(base_size = 15) + 
+  theme(plot.title = element_text(size = 14))
 
 ##### data functions #####
 mu = function(x){
