@@ -1,5 +1,5 @@
 # Code for real data example with the weather data from Nuremberg 
-# Figures 9, 10 and 11 are generated her
+
 
 library(tidyverse)
 library(plotly)
@@ -124,14 +124,14 @@ N_wide |>
   select(-(1:3)) |> is.na() |> sum()
 
 
-##### calculate weights #####
+#### calculate weights ####
 p.eval = 72
 W = local_polynomial_weights(144, 0.2, p.eval, T, m = 1)
 Wh05 = local_polynomial_weights(144, 0.5, p.eval, T, m = 1)
 Wh01 = local_polynomial_weights(144, 0.1, p.eval, T, m = 1)
 eval_time = N$UHRZEIT[1:146][seq(2, 144, 2)]
 
-###### January ######
+##### January #####
 # Figure 9a: temp curves in January
 N |>  filter(TAG %in% c(1, 15, 29), 
              MONAT == 1) |> 
@@ -166,7 +166,7 @@ plot_ly(cov_est_df1, x = ~x, y = ~y, z = ~g_hat1, size = .4) |>
 temp = matrix(diag(g_hat1), p.eval, p.eval)
 cor_hat1 = g_hat1 / sqrt( temp * t(temp) )
 
-# Figure 11a
+##### Figure 3.14 (a) #####
 plot_ly(cov_est_df1, x = ~x*24, y = ~y*24, z = ~cor_hat1, size = .4) |> 
   add_surface(colorscale = cs2, alpha = .3) |> 
   layout(scene = list(xaxis = list(title = ""), 
@@ -174,41 +174,7 @@ plot_ly(cov_est_df1, x = ~x*24, y = ~y*24, z = ~cor_hat1, size = .4) |>
                       zaxis = list(title = "")))
 
 
-
-###### August ######
-g_hat = cov_estimation(8)
-var_hat = diag(g_hat)
-var_est = tibble(var_hat, x = eval_time)
-var_est |> 
-  ggplot(aes(x = x, y = sqrt(var_hat))) + 
-  geom_line(linewidth = .7) + 
-  lims(y = c(0.2, 5)) + 
-  labs(y = NULL, x = "hour", title = "Std. deviation of temperatur in August") + 
-  theme(legend.position = "none", 
-        text = element_text(size = 18)) 
-
-cov_est_df = data.frame(x = W$x.eval, y = W$x.eval, z = g_hat)
-cs2 = list(c(0, 1), c("lightblue", "darkred"))
-
-# Plot of Covariance Kernel: Not in Paper
-plot_ly(cov_est_df, x = ~x, y = ~y, z = ~g_hat, size = .4) |> 
-  add_surface(colorscale = cs2, alpha = .3) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
-
-temp = matrix(diag(g_hat), p.eval, p.eval)
-cor_hat = g_hat / sqrt( temp * t(temp) )
-
-# Figure 11b: Plot of Correlation in August.
-plot_ly(cov_est_df, x = ~x*24, y = ~y*24, z = ~cor_hat, size = .4) |> 
-  add_surface(colorscale = cs2, alpha = .3) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
-
-
-###### July ######
+##### July #####
 g_hat = cov_estimation(7)
 var_hat = diag(g_hat)
 var_est = tibble(var_hat, x = eval_time)
@@ -233,14 +199,14 @@ plot_ly(cov_est_df, x = ~x, y = ~y, z = ~g_hat, size = .4) |>
 temp = matrix(diag(g_hat), p.eval, p.eval)
 cor_hat = g_hat / sqrt( temp * t(temp) )
 
-# Plot of Correlation in July
+##### Figure 3.14(b) #####
 plot_ly(cov_est_df, x = ~x*24, y = ~y*24, z = ~cor_hat, size = .4) |> 
   add_surface(colorscale = cs2, alpha = .3) |> 
   layout(scene = list(xaxis = list(title = ""), 
                       yaxis = list(title = ""), 
                       zaxis = list(title = "")))
-###### std_deviation ######
 
+##### std_deviation #####
 sd_tibble_m1h02 = sapply(1:12, 
                          function(m){
                            est = cov_estimation(m) |> diag() |> sqrt()
@@ -271,7 +237,7 @@ sd_tibble = sd_tibble_m1h01 |>
 
 sd_tibble$time  = sd_tibble$time |> as.POSIXct(format = "%H:%M")
 
-# Figure 10: all standard deviations. 
+##### Figure 3.13 #####
 sd_tibble |> 
   ggplot(aes(x = time, y = sd, lty = h, col = h)) + 
   geom_line(linewidth = .8) + 
@@ -282,3 +248,7 @@ sd_tibble |>
   scale_linetype_manual(values = c(2,5,4), name = "h (min)") + 
   scale_color_manual(values = 1:3, name = "h (min)") + 
   scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M")
+ggsave("weather/grafics/sd_all_months.pdf", device = "pdf", unit = "in", width = 9, height = 6)
+
+rm(W, Wh01, Wh05)
+save.image("weather/data/weather_covariace_results.RData")
