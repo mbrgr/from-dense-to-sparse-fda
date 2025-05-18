@@ -58,13 +58,14 @@ error_decomp_tbl |>
 #### Figure 3.6 ####
 error_decomp_tbl |> 
   filter(p != 75) |> 
-  ggplot(aes(x = n, y = error, col = term, lty = term)) + 
+  ggplot(aes(x = n, y = error, col = term, lty = term, pch = term)) + 
   geom_line(size = .6) + 
+  geom_point() + 
   facet_wrap(.~p, nrow = 1) +
   my_theme + 
   labs(y = "sup.error")
 
-ggsave("cov/grafics/error_decomp_different_p.png", device = "png", width = 8, height = 5, units = "in")
+ggsave("cov/grafics/error_decomp_different_p.pdf", device = "pdf", width = 10, height = 5.5, units = "in")
 
 # Not in Paper
 error_decomp_tbl |> 

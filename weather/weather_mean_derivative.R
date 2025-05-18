@@ -9,10 +9,16 @@ library(plotly)
 library(locpol)
 library(ffscb)
 
+#### results ####
+load("weather/data/results_weather_mean_derivative.RData")
+# includes Figure 2.11 and 2.12
 
 
 #### Load and process the data ####
 load("weather/data/weather_data_nuremberg.RData")
+my_theme = theme_grey(base_size = 15) + 
+  theme(plot.title = element_text(size = 14))
+
 #source("mean/functions_mean.R")
 
 head(N, n = 7)
@@ -85,17 +91,22 @@ deriv_tibble = monthly_weather_deriv |>
 time = N$UHRZEIT[7:150]
 time 
 
+
+
 ###### Figure 11 ######
 cbind(deriv_tibble, rep(time, each = 1728/144)) |> 
   mutate(month = as.factor(month)) |> 
   rename(time = "rep(time, each = 1728/144)") |> 
+  mutate(time = as.POSIXct(time)) |>  
   ggplot(aes(x = time, y = deriv, col = month, linetype = month)) +
   geom_line() +
-  labs(x = "time", y = NULL, title = "Derivatives of mean temperatur per month") + 
+  labs(x = "time", y = NULL, subtitle = "Derivatives of mean temperatur") + 
   scale_colour_manual(values = farben) + 
-  scale_linetype_manual(values = c(2,3,4,4,4,1:3,5,5,5,1)) 
+  scale_linetype_manual(values = c(2,3,4,4,4,1:3,5,5,5,1)) + 
+  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") + 
+  my_theme
 
-ggsave("mean/grafics/derivatives_mean_temperature.pdf", device = "pdf",
+ggsave("weather/grafics/derivatives_mean_temperature.pdf", device = "pdf",
        width = 5, height = 3.8, units = "in")
 
 # test if the estimation produces reliable results 
@@ -103,7 +114,7 @@ rbind(deriv_tibble, deriv_tibble |> mutate(x_temp = x_temp +1)) |>
   mutate(month = as.factor(month)) |> 
   ggplot(aes(x = x_temp, y = deriv, col = month, linetype = month)) +
   geom_line() +
-  labs(x = "time", y = NULL, title = "Derivatives of mean temperatur per month") + 
+  labs(x = "time", y = NULL, subtitle = "Derivatives of mean temperatur") + 
   scale_colour_manual(values = farben) + 
   scale_linetype_manual(values = c(2,3,4,4,4,1:3,5,5,5,1)) 
 
@@ -129,16 +140,21 @@ mean_tibble = monthly_weather |>
 ggplot() +
   geom_line(data = cbind(mean_tibble, rep(time, each = 1728/144)) |> 
               mutate(month = as.factor(month)) |> 
-              rename(time = "rep(time, each = 1728/144)"), 
+              rename(time = "rep(time, each = 1728/144)") |> 
+              mutate(time = as.POSIXct(time))  , 
             aes(x = time, y = temp, col = month, linetype = month)) +
-  labs(x = "time", y = NULL, title = "Estimated daily mean temperature") + 
+  labs(x = "time", y = NULL, subtitle = "Estimated daily mean temperature") + 
   scale_colour_manual(values = farben) + 
-  scale_linetype_manual(values = c(2,3,4,4,4,1:3,5,5,5,1)) +
-  deriv_est_theme + 
-  geom_text(data = data.frame(x = c(hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0),
+  scale_linetype_manual(values = c(2,3,4,4,4,1:3,5,5,5,1)) + 
+  geom_text(data = data.frame(time = c(hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0),
                                     hms(0, -15, 0), hms(0, -15, 0), hms(0, -15, 0), hms(0, -22, 0), hms(0, -22, 0), hms(0, -22, 0)), 
                               y = c(-.1, 0.3, 2.5, 6.6, 10.2, 14.25, 16, 15.5, 11.8, 7.6, 4.2, 1.5), 
-                              month = gl(12,1)), aes(label = month, x = x, y = y), hjust = 0.4)
+                              month = gl(12,1)) |> mutate(time = as.POSIXct(time)), aes(label = month, x = time, y = y), hjust = 0.4) + 
+  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") + 
+  my_theme
 
-ggsave("mean/grafics/mean_temperature.pdf", device = "pdf",
+ggsave("weather/grafics/mean_temperature.pdf", device = "pdf",
        width = 5, height = 3.8, units = "in")
+
+
+save.image("weather/data/results_weather_mean_derivative.RData")

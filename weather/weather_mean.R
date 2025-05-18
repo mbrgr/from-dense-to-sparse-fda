@@ -10,6 +10,8 @@ library(locpol)
 library(ffscb)
 
 #### results ####
+load("weather/data/results_weather_mean.RData")
+# includes Figure 2.9 and 2.10
 
 #### Load and process the data ####
 load("weather/data/weather_data_nuremberg.RData")
@@ -23,9 +25,9 @@ which(N$MESS_DATUM == "2012-01-01 00:00:00")
 which(N$MESS_DATUM == "2017-01-01 00:00:00")
 
 N1 = N0 |> 
-  mutate(time = as.character(time)) |> 
-  dplyr::select(JAHR, MONAT, TAG, time, TT_10) |> 
-  pivot_wider(names_from = time,
+  mutate(UHRZEIT = as.character(UHRZEIT)) |> 
+  dplyr::select(JAHR, MONAT, TAG, UHRZEIT, TT_10) |> 
+  pivot_wider(names_from = UHRZEIT,
               values_from = TT_10)
 
 #### Mean Estimation ####
@@ -119,17 +121,30 @@ temp_estimation |>
   facet_wrap(month ~.)
 
 
+class(as.POSIXct(N$time[1:10]))
+str(as.POSIXct(N$time[1:10]))
+
+as.POSIXct(N$time[1:10])
+as.POSIXct(temp_estimation$time[1:10])
+
+
+##### Figure 2.9 #####
 N |> 
   mutate(month = factor(month.name[month], levels = month.name)) |> 
+  mutate(time  = as.POSIXct(time)) |> 
   filter(day %in% days) |> 
   ggplot() +
-  geom_line(aes(x = time, y = TT_10, group = year*day, colour = year), alpha = .4) +
+  geom_line(aes(x = time, y = TT_10, group = interaction(year,day), colour = year), alpha = .4) +
   geom_line(data = temp_estimation |> 
-              mutate(month = factor(month.name[month], levels = month.name)), mapping = aes(y = est, x = time), color = "orange") + 
+              mutate(month = factor(month.name[month], levels = month.name))|> 
+              mutate(time  = as.POSIXct(time)), mapping = aes(y = est, x = time), color = "orange") + 
   facet_wrap(month ~.) +
-  labs(y = "°C")
+  labs(y = "°C") +
+  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") + 
+  deriv_est_theme
 
-ggsave("mean/grafics/weather_curves.pdf", device = "pdf", unit = "in", height = 6, width = 9)
+
+ggsave("weather/grafics/weather_curves.pdf", device = "pdf", unit = "in", height = 6, width = 9)
 
 
 ##### Data reduction #####
@@ -188,6 +203,12 @@ temp_estimation = temp_estimation |>
   mutate(month = factor(month.name[month], levels = month.name))
 selected_month = c("January", "July")
 
+
+##### Figure 2.10 ######
+
+temp_estimation = temp_estimation |> 
+  mutate(time  = as.POSIXct(time))
+
 ggplot() + 
   geom_point(data = temp_estimation |> 
                filter(month %in% selected_month) , aes(x = time, y = avg_temp), color = "orange", pch = 3, size = .5) +
@@ -204,9 +225,11 @@ ggplot() +
   geom_line(data = temp_estimation |> 
               filter(month %in% selected_month) , aes(x = time, y = two_hour_est), color = "green", linetype = 3) + 
   labs(y = "°C") + 
-  facet_wrap(month ~ .) 
+  facet_wrap(month ~ .) +
+  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") + 
+  deriv_est_theme
 
-ggsave("mean/grafics/weather_fnf_jan_july.pdf", device = "pdf", unit = "in", height = 5, width = 7)
+ggsave("weather/grafics/weather_fnf_jan_july.pdf", device = "pdf", unit = "in", height = 7, width = 9)
 
 temp_estimation |> 
   filter(one_hour_est > fnf_up | one_hour_est < fnf_lo) |> 
@@ -218,3 +241,4 @@ temp_estimation |>
   group_by(month) |> 
   summarise(n = n())
 
+save.image("weather/data/results_weather_mean.RData")

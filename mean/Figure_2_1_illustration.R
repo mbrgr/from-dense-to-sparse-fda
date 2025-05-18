@@ -72,10 +72,10 @@ ggplot() +
                                  "deg = 2" = "Quad")) + 
   geom_point(aes(x = x, y = val), 
              mu_tibble |> filter(fun == "obs"), alpha = .2) + 
-  labs(title = "Mean function", y = NULL, x = NULL, colour = NULL, lty = NULL) + 
+  labs(subtitle = "Mean function", y = NULL, x = NULL, colour = NULL, lty = NULL) + 
   deriv_est_theme
 
-ggsave("mean/grafics/mean_est_n10_p101.pdf", device = "pdf", width = 5.5, height = 3.7, units = "in")
+ggsave("mean/grafics/mean_est_n10_p101.pdf", device = "pdf", width = 5, height = 3.7, units = "in")
 
 ###### First Derivative ######
 
@@ -101,7 +101,7 @@ mu_deriv_tibble |>
       "deg = 3" = "Cubic"
     )
   )  + 
-  labs(title = "First derivative", y = NULL, x = NULL, colour = NULL, lty = NULL) + 
+  labs(subtitle = "First derivative", y = NULL, x = NULL, colour = NULL, lty = NULL) + 
   deriv_est_theme
 
-ggsave("mean/grafics/derivative_est_n10_p101.pdf", device = "pdf", width = 5.5, height = 3.7, units = "in")
+ggsave("mean/grafics/derivative_est_n10_p101.pdf", device = "pdf", width = 5, height = 3.7, units = "in")

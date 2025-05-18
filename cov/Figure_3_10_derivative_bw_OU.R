@@ -9,16 +9,15 @@ my_theme = theme_grey(base_size = 15) +
   theme(plot.title = element_text(size = 14))
 
 #### results ####
+load("cov/data/bandwidth_comparison_derivative_cov_OU.RData")
 
 # 
 source("cov/functions.r")
 
 
 ##### Bandwidth Comparison for Covariance derivative estimation #####
-N = 500 #N = 1000
-#n.seq = c(50) #
+N = 500 
 n.seq = c(50, 100, 200, 400)
-#p.seq = c(50) #
 p.seq = c(15, 25, 50, 75)
 
 p.eval= 50 #p.eval = 100
@@ -48,27 +47,28 @@ for(l in 1:length(p.seq)){
 
 parallel::stopCluster(cl)
 
-save.image("cov/data/bandwidth_comparison_derivative_cov_OU.RData")
-load("cov/data/bandwidth_comparison_derivative_cov_OU.RData")
-
-
 bw_comparison_tibble = Reduce(rbind, bw_comparison)
 colnames(bw_comparison_tibble) = c("n", "p", "h", "sup.err")
 bw_comparison_tibble = bw_comparison_tibble %>% 
   as_tibble() %>% 
   mutate(p = as.factor(p))
 
+##### Figure 3.10 #####
 ggplot(bw_comparison_tibble) + 
   geom_point(aes(x = h, y = sup.err, col = p)) + 
   lims(y = c(0, 10.4)) +
   facet_wrap(n ~., nrow = 1) + 
   my_theme
 
-ggsave("cov/grafics/bw_comp_cov_deriv_OU.pdf", device = "pdf", unit = "in", width = 8, height = 5)
+ggsave("cov/grafics/bw_comp_cov_deriv_OU.pdf", device = "pdf", width = 10, height = 5.5, units = "in")
 
 bw_comparison_tibble |> 
   group_by(n, p) |> 
   slice_min(sup.err)
+
+
+save.image("cov/data/bandwidth_comparison_derivative_cov_OU.RData")
+
 
 
 

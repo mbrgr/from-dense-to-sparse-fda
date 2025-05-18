@@ -20,7 +20,7 @@ library(biLocPol) # please install this package from Github first. See "README.m
 #' @export
 #'
 #' @examples
-#' 0 # TODO
+#' 0 # TODO why is this function so large??
 error_decomposition = function(W, n, N, Gamma = cov.ou, Gamma.arg = list(theta = 2, sigma = 3), 
                                lower.order.errors = F, f = mu, 
                                r.process = OU, process.arg = list(alpha = 2, sigma = 3), 
@@ -267,5 +267,119 @@ partial01_cov_z_2rv = function(t){
 partial11_cov_z_2rv = function(t){
   4/9*pi^2*cos(pi*t[1])*cos(pi*t[2]) +
     25/18*pi^2*sin(1.25*pi*t[1])*sin(1.25*pi*t[2])
+}
+
+
+
+##### Bandwidth Evaluation Function #####
+
+bandwidth_evaluation_derivative_OU = function(h, p, p.eval, n.seq, N, eps.sd = 0.25, boundary_correction = F, correction = 0.1){
+  if(!boundary_correction){
+    correction = 0
+  }
+  x.design = (1:p - 0.5)/p
+  x.eval.design = (1:p.eval - 0.5)/p.eval
+  s = length(h)
+  x.eval.grid = observation_grid(p.eval, comp = "full")
+  G10 = matrix(apply(x.eval.grid, 1, del10_cov_OU), p.eval, p.eval)
+  
+  sup.err10 = numeric(length(n.seq))
+  w = local_polynomial_weights(p, h, p.eval, F, m = 2, grid.type = "less", del = 1)
+  for(k in 1:length(n.seq)){
+    n = n.seq[k]
+    sup.err10[k] =  mean(replicate(N, {
+      Y = biLocPol::OU(n, x.design, sigma = sigma, alpha = theta) + matrix(rnorm(n * p, 0, eps.sd), n, p) # n x p
+      Z = observation_transformation(Y)
+      trim = which(x.design > correction & x.design < (1-correction))
+      trim = which(x.eval.design > correction & x.eval.design < (1-correction))
+      estimate = eval_weights(w, Z)[,,3]
+      max(abs(estimate - G10)[trim, trim])
+    }))
+  }
+  rm(w)
+  matrix(c(n.seq, rep(c(p, h), each = length(n.seq)), sup.err10), ncol =  4)
+}
+
+
+error_decomposition_deriv = function(W, n, N, eps.sd = .75, parallel = T,
+                                     parallel.environment = T, correction = F, h_c = 0.1){
+  
+  w = W$weights
+  p = W$p
+  
+  up = as.vector(upper.tri(diag(numeric(p))))
+  dw = as.vector(lower.tri(diag(numeric(p))))
+  
+  if(correction){
+    x.eval = (1:p.eval - 0.5)/p.eval
+    trim = which(x.eval > h_c & x.eval < (1-h_c))
+  }else{
+    trim = T
+  }
+  
+  code = function(useless){
+    # simulate data
+    # f.eval = f(x.design) # R^p --> not neccessary, since it cancels out anyway
+    process = biLocPol::OU(n, (1:p - 0.5)/p, sigma = sigma, alpha = theta)
+    eps     = matrix(rnorm(n*p, 0, eps.sd), n, p)
+    Z = observation_transformation(process + eps)  # + f.eval if mean function shall be considered
+    
+    # calculate parts of error decomposition 
+    # (10): 1/n * sum_{i = 1}^n e_{i,j} e_{i,k}
+    E = rowMeans(apply(eps, 1, tcrossprod))[up] # length p*(p-1)/2
+    # T10 = as.vector(crossprod(w, E))
+    T10 = eval_weights(W, E)[trim,trim,3] |> abs() |> max()
+    
+    G   = apply(observation_grid(p, comp = "full"), 1, biLocPol::cov_ou, sigma = 3, theta = 2)
+    ZZ  = rowMeans(apply(process, 1, tcrossprod))
+    T12 = eval_weights(W, (ZZ - G)[up])[trim,trim,3] |> abs() |> max()
+    
+    # (13): Mixture term: 1/n sum_{i=1}^n Z_ij e_ik + Z_ik e_ij
+    temp = rowMeans(sapply(1:n, function(i){ tcrossprod(process[i,], eps[i,]) }))
+    ZE = temp[up] + temp[dw]
+    T13 = eval_weights(W, ZE)[trim,trim,3] |>abs() |> max()
+    # T13 = as.vector(crossprod(w, ZE))
+    
+    # (11): Discretization Error: Gamma_{j,k} - Gamma(x,y)  
+    temp = apply(biLocPol::observation_grid(p.eval, comp = "full"), 1, del10_cov_OU)
+    T11 = max(abs((eval_weights(W, G[up])[trim,trim,3] - matrix(temp, p.eval, p.eval, byrow = F)[trim, trim] )))
+    # T11 as.vector.data.frame()# T11 = as.vector(crossprod(w, G) - temp)
+    
+    # Overall Error 
+    SUM = max(abs((eval_weights(W, Z)[trim,trim,3] - matrix(temp, p.eval, p.eval, byrow = F)[trim, trim] )))
+    rm(temp)
+    
+    cbind(err.2 = T10, Discr = T11, Process = T12, Mix = T13, sup.err = SUM)
+  }
+  
+  if(parallel){
+    if(parallel.environment)
+    {
+      cl = makeCluster(detectCores( ) - 1)
+      plan(future::cluster)
+    }
+    erg = future_sapply(1:N, code, future.seed = T)
+    if (parallel.environment) { stopCluster(cl) }
+  }else{
+    erg = sapply(1:N, code)
+  }
+  rowMeans(erg)
+}
+
+
+
+#### Derivatives of the OU Cov Kernel ####
+del10_cov_OU = function(t, sigma = 3, theta = 2){
+  if(t[1] > t[2]){
+    return(sigma^2/2 * (exp(-theta*(t[1] - t[2])) + exp(-theta*(t[1]+t[2])) ))
+  }
+  #if(t[1] == t[2]){return(sigma^2 * exp(-theta*2*t[1]))}
+  else{
+    return(sigma^2/2 * (-exp(theta*(t[1] - t[2])) + exp(-theta*(t[1]+t[2])) ))
+  }
+}
+
+del01_cov_OU = function(t, sigma = 3, theta = 2){
+  return(del10_cov_OU(c(t[2], t[1]), sigma, theta))
 }
 
