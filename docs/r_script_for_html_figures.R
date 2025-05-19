@@ -9,3 +9,8 @@ saveWidget(figure32a, "docs/figure32a.html", selfcontained = T)
 saveWidget(figure32b, "docs/figure32b.html", selfcontained = T)
 saveWidget(figure37a, "docs/figure37a.html", selfcontained = T)
 saveWidget(figure37b, "docs/figure37b.html", selfcontained = T)
+
+load("cov/data/figure_3_9.RData")
+
+saveWidget(figure39a, "docs/figure39a.html", selfcontained = T)
+saveWidget(figure39b, "docs/figure39b.html", selfcontained = T)

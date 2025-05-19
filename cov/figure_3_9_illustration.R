@@ -105,3 +105,7 @@ save_image(figure39a,
 rm(w)
 rm(w2)
 save.image("cov/data/results_figure_3_9b.RData")
+
+rm(list = setdiff(ls(), 
+                  c("figure39a", "figure39b")))
+save.image("cov/data/figure_3_9.RData")
