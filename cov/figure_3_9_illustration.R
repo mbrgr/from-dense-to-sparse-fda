@@ -102,6 +102,6 @@ figure39b
 save_image(figure39a, 
            file = "cov/grafics/2rv_G10.pdf", 
            width = 600, height = 750)
-
-rm(w, w3)
+rm(w)
+rm(w2)
 save.image("cov/data/results_figure_3_9b.RData")
