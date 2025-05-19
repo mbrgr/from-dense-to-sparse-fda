@@ -109,7 +109,7 @@ final_est = est_per_month %>%
   mutate(time = rep(rep(time, each = 12), 2)) %>% 
   mutate(name = factor(name, levels = 1:12)) 
 
-##### Figure 16 #####
+##### Figure 3.16 #####
 final_est %>% 
   ggplot(aes( x = time, y = value, color = g, linetype = g)) + 
   facet_wrap(name~.)  + 
@@ -125,7 +125,7 @@ final_est %>%
 
 ggsave("mean/grafics/weather_part_deriv_gamma_diagonal_all_months.pdf", device = "pdf", width = 9, height = 6, units = "in")
 
-##### Figure 13 #####
+##### Figure 3.13 #####
 final_est %>% 
   filter(name == 4 ) %>% 
   ggplot(aes( x = time, y = value, color = g, linetype = g)) + 

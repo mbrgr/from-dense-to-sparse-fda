@@ -47,7 +47,8 @@ N |>
   geom_line(aes(x = UHRZEIT, y = TT_10, group = JAHR*TAG, colour = JAHR), alpha = .4) +
   facet_wrap(MONAT ~.)
 
-# Figure 3.12: Temperature curves in January
+##### Figure 3.12 (a) #####
+# Temperature curves in January
 N |>  
   filter(MONAT == 1) |> 
   ggplot() +
@@ -56,7 +57,8 @@ N |>
   my_theme
 ggsave("weather/grafics/january_temp_curves.pdf", device = "pdf", width = 5, height = 3.8, unit = "in")
 
-# (b): Temperature curves in July 
+##### Figure 3.12 (b) #####
+# Temperature curves in July 
 N |>  
   filter(TAG %in% tage, 
          MONAT == 7) |> 
