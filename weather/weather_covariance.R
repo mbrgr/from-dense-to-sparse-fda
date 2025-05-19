@@ -1,6 +1,7 @@
+#### results ####
+load("weather/data/weather_covariace_results.RData")
+
 # Code for real data example with the weather data from Nuremberg 
-
-
 library(tidyverse)
 library(plotly)
 
@@ -12,6 +13,17 @@ library(future.apply)
 
 my_theme = theme_grey(base_size = 15) + 
   theme(plot.title = element_text(size = 14))
+
+back_layout = function(p, x = 2, y = 1.2, z = .2) {
+  p |> layout(
+    scene = list(
+      camera = list(eye = list(x = x, y = y, z = z)),# controls the angle
+      xaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      yaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      zaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14))),
+    showlegend = F
+  )
+}
 
 
 # Parameter description
@@ -134,15 +146,6 @@ Wh01 = local_polynomial_weights(144, 0.1, p.eval, T, m = 1)
 eval_time = N$UHRZEIT[1:146][seq(2, 144, 2)]
 
 ##### January #####
-# Figure 9a: temp curves in January
-N |>  filter(TAG %in% c(1, 15, 29), 
-             MONAT == 1) |> 
-  ggplot() +
-  geom_line(aes(x = UHRZEIT, y = TT_10, group = JAHR*TAG, colour = JAHR), alpha = .7) + 
-  labs(y = "Temp. in C°", x = "hours", title = "Temp. in January", colour = "year") + 
-  theme(text = element_text(size = 18)) 
-
-
 g_hat1 = cov_estimation(1)
 var_hat1 = diag(g_hat1)
 
@@ -169,12 +172,10 @@ temp = matrix(diag(g_hat1), p.eval, p.eval)
 cor_hat1 = g_hat1 / sqrt( temp * t(temp) )
 
 ##### Figure 3.14 (a) #####
-plot_ly(cov_est_df1, x = ~x*24, y = ~y*24, z = ~cor_hat1, size = .4) |> 
-  add_surface(colorscale = cs2, alpha = .3) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
-
+figure_3_14a = plot_ly(cov_est_df1, x = ~x*24, y = ~y*24, z = ~cor_hat1, size = .4) |> 
+  add_surface(colorscale = cs2, alpha = .3, showscale = F) |> 
+  back_layout(x = -2, y = -1, z = 1)
+figure_3_14a
 
 ##### July #####
 g_hat = cov_estimation(7)
@@ -193,20 +194,17 @@ cs2 = list(c(0, 1), c("lightblue", "darkred"))
 
 # Plot of Covariance Kernel: Not in Paper
 plot_ly(cov_est_df, x = ~x, y = ~y, z = ~g_hat, size = .4) |> 
-  add_surface(colorscale = cs2, alpha = .3) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
+  add_surface(colorscale = cs2, alpha = .3, showscale = F) |> 
+  back_layout(x = -2, y = -1, z = 1)
 
 temp = matrix(diag(g_hat), p.eval, p.eval)
 cor_hat = g_hat / sqrt( temp * t(temp) )
 
 ##### Figure 3.14(b) #####
-plot_ly(cov_est_df, x = ~x*24, y = ~y*24, z = ~cor_hat, size = .4) |> 
-  add_surface(colorscale = cs2, alpha = .3) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
+figure_3_14b = plot_ly(cov_est_df, x = ~x*24, y = ~y*24, z = ~cor_hat, size = .4) |> 
+  add_surface(colorscale = cs2, alpha = .3, showscale = F) |> 
+  back_layout(x = -2, y = -1, z = 1)
+figure_3_14b
 
 ##### std_deviation #####
 sd_tibble_m1h02 = sapply(1:12, 
