@@ -4,7 +4,7 @@ library(biLocPol) # please install this package from Github first. See "README.m
 
 ##### Description #####
 # Code for images of the two covariance kernels
-# Figure 3.1, 3.2
+# Figure 3.1, 3.2, 3.7
 
 #### results ####
 # instead of evaluating the functions all again the results can be loaded with
@@ -93,11 +93,10 @@ cs2 = list(c(0, 1), c("lightblue", "darkred"))
 figure32a = plot_ly(df.all, x = ~Var1, y = ~Var2, z = ~Z.all, size = .4) |> 
   add_surface(x = x, y = x, z = cov.ou.eval, alpha = .3, showscale = F) |> 
   add_surface(x = x, y = x, z = est, colorscale = cs2, alpha = .3, showscale = F)
-figure32a |> back_layout(x = 2.4, y = 1, z = .6)
-figure32a 
-save_image(figure32a, 
+figure32a |> back_layout(x = 2, y = .8, z = .6)
+save_image(figure32a |> back_layout(x = 2, y = .8, z = .6), 
            file = "cov/grafics/ou_estimate_m1_h03_sd05.pdf", 
-           width = 600, height = 750)
+           width = 800, height = 750)
 
 # calculate estimator that does not mirror the results on the diagonal (without diagonal)
 #h0_cv =  k_fold_cv(Y, H, m = 0, h.parallel = T, 
@@ -112,12 +111,12 @@ figure32b = plot_ly(df.all, x = ~Var1, y = ~Var2, z = ~Z.all, size = .4) |>
   add_surface(x = x, y = x, z = cov.ou.eval, alpha = .3, showscale = F) |> 
   add_surface(x = x, y = x, z = est_standard, colorscale = cs2, alpha = .3,
               showscale = F) |> 
-  back_layout(x = 2.4, y = 1, z = .6)
+  back_layout(x = 2, y = .8, z = .6)
 
 figure32b
 save_image(figure32b, 
            file = "cov/grafics/ou_estimate_m1_h02_full_sd05.pdf", 
-           width = 600, height = 750)
+           width = 800, height = 750)
 
 #### Comparison with smooth process ####
 # Process consisting of two random variables #
@@ -178,12 +177,12 @@ figure37a = plot_ly(df_37) |>
               y = x, 
               z = est2, 
               size = .4, alpha = .2, colorscale = cs2, 
-              showscale = F)  |> back_layout(x = 1.9, y = .9, z = 1.3)
+              showscale = F)  |> back_layout(x = 2.2, y = 1.1, z = 1.1)
 figure37a
 
 save_image(figure37a, 
            file = "cov/grafics/2rv_estimate_m1_h01.pdf", 
-           width = 600, height = 750)
+           width = 700, height = 800)
 
 # estimation without mirroring
 Z_wd = observation_transformation(Y2, grid.type = "without diagonal")
@@ -205,11 +204,11 @@ figure37b = plot_ly(df_37) |>
               z = est_wd, 
               size = .4, alpha = .7, colorscale = cs2, 
               showscale = F) |>
-  back_layout(x = 1.9, y = .9, z = 1.3)
+  back_layout(x = 2.2, y = 1.1, z = 1.1)
 figure37b
 save_image(figure37b, 
-           file = "cov/grafics/2rv_estimate_m1_h01.pdf", 
-           width = 600, height = 750)
+           file = "cov/grafics/2rv_estimate_m1_h01_full.pdf", 
+           width = 700, height = 800)
 
 
 save.image("cov/data/illustrations.RData")

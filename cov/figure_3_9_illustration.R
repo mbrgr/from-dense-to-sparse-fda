@@ -57,7 +57,7 @@ figure39a = plot_ly() |>
 figure39a
 save_image(figure39a, 
            file = "cov/grafics/OU_G10.pdf", 
-           width = 600, height = 750)
+           width = 700, height = 800)
 
 rm(w)
 save.image("cov/data/results_figure_3_9a.RData")
@@ -99,9 +99,9 @@ figure39b = plot_ly() |>
   front_layout(x = -.9, y = -2.3, z = .7)
 figure39b
 
-save_image(figure39a, 
+save_image(figure39b, 
            file = "cov/grafics/2rv_G10.pdf", 
-           width = 600, height = 750)
+           width = 700, height = 800)
 rm(w)
 rm(w2)
 save.image("cov/data/results_figure_3_9b.RData")
