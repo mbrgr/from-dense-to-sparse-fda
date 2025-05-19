@@ -162,20 +162,24 @@ cov_val2 = apply(point_grid, 1, cov_z_2rv)
 c_val2 = matrix(cov_val2, sqrt(length(cov_val)))
 
 ##### Figure 3.7 (a) #####
-figure37a = plot_ly() |>
-  add_surface(x = ~x,
-              y = ~x, 
-              z = ~c_val2, 
+df_37 = data.frame(observation_grid(p.eval, comp = "full"), 
+                   as.vector(c_val2), 
+                   as.vector(est2), 
+                   as.vector(est_wd))
+figure37a = plot_ly(df_37) |>
+  add_surface(x = x,
+              y = x, 
+              z = c_val2, 
               size = .4, alpha = .7, 
               showscale = F) |>
-  add_surface(x = ~x,
-              y = ~x, 
-              z = ~est2, 
+  add_surface(x = x,
+              y = x, 
+              z = est2, 
               size = .4, alpha = .2, colorscale = cs2, 
               showscale = F)  |> back_layout(x = 1.9, y = .9, z = 1.3)
 figure37a
 
-save_image(figure32b, 
+save_image(figure37a, 
            file = "cov/grafics/2rv_estimate_m1_h01.pdf", 
            width = 600, height = 750)
 
@@ -188,20 +192,20 @@ W_wd = local_polynomial_weights(p, h = 0.1, p.eval = p.eval, m = 1, parallel = T
 est_wd = eval_weights(W_wd, Z_wd)
 
 ##### Figure 3.7 (b) #####
-figure37b = plot_ly() |>
-  add_surface(x = ~x,
-              y = ~x, 
-              z = ~c_val2, 
+figure37b = plot_ly(df_37) |>
+  add_surface(x = x,
+              y = x, 
+              z = c_val2, 
               size = .4, alpha = .7, 
               showscale = F) |>
-  add_surface(x = ~x,
-              y = ~x, 
-              z = ~est_wd, 
+  add_surface(x = x,
+              y = x, 
+              z = est_wd, 
               size = .4, alpha = .7, colorscale = cs2, 
               showscale = F) |>
   back_layout(x = 1.9, y = .9, z = 1.3)
 figure37b
-save_image(figure32b, 
+save_image(figure37b, 
            file = "cov/grafics/2rv_estimate_m1_h01.pdf", 
            width = 600, height = 750)
 
