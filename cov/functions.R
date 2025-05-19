@@ -1,5 +1,29 @@
 library(biLocPol) # please install this package from Github first. See "README.md" file for instructions
 
+#### plotly Layout ####
+back_layout = function(p, x = 2, y = 1.2, z = .2) {
+  p |> layout(
+    scene = list(
+      camera = list(eye = list(x = x, y = y, z = z)),# controls the angle
+      xaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      yaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      zaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14))),
+    showlegend = F
+  )
+}
+
+front_layout = function(p, x = -2, y = -1.2, z = .2) {
+  p |> layout(
+    scene = list(
+      camera = list(eye = list(x = x, y = y, z = z)),# controls the angle
+      xaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      yaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      zaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14))),
+    showlegend = F
+  )
+}
+
+
 ##### Error Decomposition #####
 
 #' @param W weights

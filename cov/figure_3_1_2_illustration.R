@@ -62,21 +62,20 @@ cov.ou.eval = matrix(apply(observation_grid(p.eval, comp = "full"), 1, function(
 figure31 = plot_ly(df.all, x = ~Var1, y = ~Var2, z = ~Z.all, size = .4) |> 
   add_markers() |> 
   add_surface(x = x, y = x, z = cov.ou.eval, 
-              colors = c('#BF382A', '#0C4B8E'), alpha = .3) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = ""))) 
-figure31 |> 
-  layout(scene = list(
-    camera = list(
-      eye = list(x = 1, y = 0.5, z = 1)  # controls the angle
-    )
-  ))
+              colors = c('#BF382A', '#0C4B8E'), alpha = .3, showscale = FALSE) |> 
+  layout() 
+figure31b = figure31 |> back_layout()
+figure31a = figure31 |> front_layout()
+
 # the following needs the setup to python... otherwise use the export function from the viewer
 # front shot
-save_image(figure31, file = "cov/grafics/OU_observation_n100p40theta3sigma2sd05_front.pdf")
+save_image(figure31a, 
+           file = "cov/grafics/OU_observation_n100p40theta3sigma2sd05_front.pdf", 
+           width = 600, height = 750)
 # back shot
-save_image(figure31, file = "cov/grafics/OU_observation_n100p40theta3sigma2sd05_back.pdf")
+save_image(figure31b, 
+           file = "cov/grafics/OU_observation_n100p40theta3sigma2sd05_back.pdf", 
+           width = 600, height = 750)
 
 
 ##### Estimation #####
@@ -92,13 +91,13 @@ cs2 = list(c(0, 1), c("lightblue", "darkred"))
 
 ##### Figure 3.2 (a) #####
 figure32a = plot_ly(df.all, x = ~Var1, y = ~Var2, z = ~Z.all, size = .4) |> 
-  add_surface(x = x, y = x, z = cov.ou.eval, alpha = .3) |> 
-  add_surface(x = x, y = x, z = est, colorscale = cs2, alpha = .3)|> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
-figure32a
-save_image(figure32a, file = "cov/grafics/ou_estimate_m1_h03_sd05.pdf")
+  add_surface(x = x, y = x, z = cov.ou.eval, alpha = .3, showscale = F) |> 
+  add_surface(x = x, y = x, z = est, colorscale = cs2, alpha = .3, showscale = F)
+figure32a |> back_layout(x = 2.4, y = 1, z = .6)
+figure32a 
+save_image(figure32a, 
+           file = "cov/grafics/ou_estimate_m1_h03_sd05.pdf", 
+           width = 600, height = 750)
 
 # calculate estimator that does not mirror the results on the diagonal (without diagonal)
 #h0_cv =  k_fold_cv(Y, H, m = 0, h.parallel = T, 
@@ -110,13 +109,15 @@ est_standard = eval_weights(W0, Z0)
 ##### Figure 3.2 (b) #####
 # compare estimate without the diagonal and without mirroring with actual kernel
 figure32b = plot_ly(df.all, x = ~Var1, y = ~Var2, z = ~Z.all, size = .4) |> 
-  add_surface(x = x, y = x, z = cov.ou.eval, alpha = .3) |> 
-  add_surface(x = x, y = x, z = est_standard, colorscale = cs2, alpha = .3)|> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
+  add_surface(x = x, y = x, z = cov.ou.eval, alpha = .3, showscale = F) |> 
+  add_surface(x = x, y = x, z = est_standard, colorscale = cs2, alpha = .3,
+              showscale = F) |> 
+  back_layout(x = 2.4, y = 1, z = .6)
+
 figure32b
-save_image(figure32a, file = "cov/grafics/ou_estimate_m1_h02_full_sd05.pdf")
+save_image(figure32b, 
+           file = "cov/grafics/ou_estimate_m1_h02_full_sd05.pdf", 
+           width = 600, height = 750)
 
 #### Comparison with smooth process ####
 # Process consisting of two random variables #
@@ -165,15 +166,18 @@ figure37a = plot_ly() |>
   add_surface(x = ~x,
               y = ~x, 
               z = ~c_val2, 
-              size = .4, alpha = .7) |>
+              size = .4, alpha = .7, 
+              showscale = F) |>
   add_surface(x = ~x,
               y = ~x, 
               z = ~est2, 
-              size = .4, alpha = .2, colorscale = cs2) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
+              size = .4, alpha = .2, colorscale = cs2, 
+              showscale = F)  |> back_layout(x = 1.9, y = .9, z = 1.3)
 figure37a
+
+save_image(figure32b, 
+           file = "cov/grafics/2rv_estimate_m1_h01.pdf", 
+           width = 600, height = 750)
 
 # estimation without mirroring
 Z_wd = observation_transformation(Y2, grid.type = "without diagonal")
@@ -188,15 +192,24 @@ figure37b = plot_ly() |>
   add_surface(x = ~x,
               y = ~x, 
               z = ~c_val2, 
-              size = .4, alpha = .7) |>
+              size = .4, alpha = .7, 
+              showscale = F) |>
   add_surface(x = ~x,
               y = ~x, 
               z = ~est_wd, 
-              size = .4, alpha = .7, colorscale = cs2) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = "")))
+              size = .4, alpha = .7, colorscale = cs2, 
+              showscale = F) |>
+  back_layout(x = 1.9, y = .9, z = 1.3)
 figure37b
+save_image(figure32b, 
+           file = "cov/grafics/2rv_estimate_m1_h01.pdf", 
+           width = 600, height = 750)
 
 
 save.image("cov/data/illustrations.RData")
+
+rm(list = setdiff(ls(), 
+                  c("figure31a", "figure31b", 
+                    "figure32a", "figure32b", 
+                    "figure37a", "figure37b")))
+save.image("cov/data/plotly_illustration_figures.RData")
