@@ -93,7 +93,7 @@ time
 
 
 
-###### Figure 11 ######
+###### Figure 2.12 ######
 cbind(deriv_tibble, rep(time, each = 1728/144)) |> 
   mutate(month = as.factor(month)) |> 
   rename(time = "rep(time, each = 1728/144)") |> 
@@ -136,7 +136,7 @@ mean_tibble = monthly_weather |>
   pivot_longer(1:12, values_to = "temp", names_to = "month") |> 
   mutate(month = as.numeric(month) ) 
 
-###### Figure 12 ######
+###### Figure 2.11 ######
 ggplot() +
   geom_line(data = cbind(mean_tibble, rep(time, each = 1728/144)) |> 
               mutate(month = as.factor(month)) |> 
