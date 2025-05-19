@@ -172,10 +172,15 @@ temp = matrix(diag(g_hat1), p.eval, p.eval)
 cor_hat1 = g_hat1 / sqrt( temp * t(temp) )
 
 ##### Figure 3.14 (a) #####
-figure_3_14a = plot_ly(cov_est_df1, x = ~x*24, y = ~y*24, z = ~cor_hat1, size = .4) |> 
-  add_surface(colorscale = cs2, alpha = .3, showscale = F) |> 
+figure_3_14a = plot_ly() |> 
+  add_surface(colorscale = cs2, x = ~cov_est_df1$x*24, y = ~cov_est_df1$y*24, z = ~cor_hat1, size = .4, alpha = .3, showscale = F) |> 
   back_layout(x = -2, y = -1, z = 1)
 figure_3_14a
+
+save_image(figure_3_14a, 
+           file = "cov/grafics/january_correlation_h02.pdf", 
+           width = 700, height = 800)
+
 
 ##### July #####
 g_hat = cov_estimation(7)
@@ -201,10 +206,14 @@ temp = matrix(diag(g_hat), p.eval, p.eval)
 cor_hat = g_hat / sqrt( temp * t(temp) )
 
 ##### Figure 3.14(b) #####
-figure_3_14b = plot_ly(cov_est_df, x = ~x*24, y = ~y*24, z = ~cor_hat, size = .4) |> 
-  add_surface(colorscale = cs2, alpha = .3, showscale = F) |> 
+figure_3_14b = plot_ly(cov_est_df) |> 
+  add_surface(colorscale = cs2, x = ~x*24, y = ~y*24, z = ~cor_hat, size = .4, alpha = .3, showscale = F) |> 
   back_layout(x = -2, y = -1, z = 1)
 figure_3_14b
+
+save_image(figure_3_14b, 
+           file = "cov/grafics/july_correlation_h02.pdf", 
+           width = 700, height = 800)
 
 ##### std_deviation #####
 sd_tibble_m1h02 = sapply(1:12, 
@@ -252,3 +261,10 @@ ggsave("weather/grafics/sd_all_months.pdf", device = "pdf", unit = "in", width =
 
 rm(W, Wh01, Wh05)
 save.image("weather/data/weather_covariace_results.RData")
+
+rm(list = setdiff(ls(), 
+                  c("figure_3_14a", "figure_3_14b", 
+                    "cov_est_df1", "cor_hat1", 
+                    "cov_est_df", "cor_hat")))
+save.image("cov/data/figure_3_14.RData")
+
