@@ -166,6 +166,8 @@ df_37 = data.frame(observation_grid(p.eval, comp = "full"),
                    as.vector(c_val2), 
                    as.vector(est2), 
                    as.vector(est_wd))
+colnames(df_37) = c("x1", "x2", "c_val2", "est2", "est_wd")
+
 figure37a = plot_ly(df_37) |>
   add_surface(x = x,
               y = x, 

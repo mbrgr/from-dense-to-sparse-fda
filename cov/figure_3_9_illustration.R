@@ -43,14 +43,20 @@ trim = which(x.design > 0.2 & x.design < 0.8)
 cs2 = lisG10_UPcs2 = list(c(0, 1), c("lightblue", "darkred"))
 
 ##### Figure 3.9 (a) #####
-plot_ly() |> 
-  add_surface(x = x, y = x, z = G10_UP, alpha = .8) |> 
-  add_surface(x = x, y = x, z = G10_DN, alpha = .8) |> 
-  add_surface(x = x, y = x, z = estimate_UP, alpha = .8, colorscale = cs2) |> 
-  add_surface(x = x, y = x, z = estimate_DN, alpha = .8, colorscale = cs2) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = ""))) 
+figure39a = plot_ly() |> 
+  add_surface(x = x, y = x, z = G10_UP, 
+              alpha = .8, showscale = F) |> 
+  add_surface(x = x, y = x, z = G10_DN, 
+              alpha = .8, showscale = F) |> 
+  add_surface(x = x, y = x, z = estimate_UP, alpha = .8, colorscale = cs2,
+              showscale = F) |> 
+  add_surface(x = x, y = x, z = estimate_DN, 
+              alpha = .8, colorscale = cs2, showscale = F) |>
+  front_layout(x = -.9, y = -2.3, z = .7)
+figure39a
+save_image(figure39a, 
+           file = "cov/grafics/OU_G10.pdf", 
+           width = 600, height = 750)
 #plot_ly() |> 
 #  add_surface(x = x[trim], y = x[trim], z = abs(G10_UP - estimate_UP)[trim, trim]) |> 
 #  add_surface(x = x[trim], y = x[trim], z = abs(G10_DN - estimate_DN)[trim, trim]) |> 
@@ -89,13 +95,12 @@ estimate_2DN[UP] = NA
 estimate_2UP[DN] = NA
 
 ##### Figure 3.9 (b) #####
-plot_ly() |> 
+figure39b = plot_ly() |> 
   add_surface(x = x, y = x, z = G10_2, alpha = .8) |> 
-  add_surface(x = x, y = x, z = estimate_2UP, alpha = .8, colorscale = cs2) |> 
-  add_surface(x = x, y = x, z = estimate_2DN, alpha = .8, colorscale = cs2) |> 
-  layout(scene = list(xaxis = list(title = ""), 
-                      yaxis = list(title = ""), 
-                      zaxis = list(title = ""))) 
+  add_surface(x = x, y = x, z = estimate_2UP, alpha = .8, colorscale = cs2, showscale = F) |> 
+  add_surface(x = x, y = x, z = estimate_2DN, alpha = .8, colorscale = cs2, showscale = F) |>
+  front_layout(x = -.9, y = -2.3, z = .7)
+figure39b
 
 rm(w, w3)
 save.image("cov/data/results_figure_3_9.RData")
