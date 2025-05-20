@@ -60,12 +60,16 @@ comp_tibble = tibble(sup.err  = c(unlist(erg_loc_lin),
                                        rep("quartic", length(unlist(erg_loc_4)))  ) ))
 
 comp_tibble |> 
-  ggplot(aes(x = h, y= sup.err, col = p,lty = est)) + 
-  geom_line() + 
+  ggplot(aes(x = h, y= sup.err, col = p, pch = est)) + 
+#  geom_line() + 
+  geom_point() + 
   lims( y = c(0.01, 0.31)) + 
   scale_linetype_manual(values = 2:5, 
                         breaks = c("lin", "quad", "cubic", "quartic")) + 
-  labs(subtitle = "n = 600")
+  labs(subtitle = "n = 600") + 
+  deriv_est_theme
 
 
-ggsave("degree_comparison.png", device = "png", width = 6, height = 3.8, units = "in")
+ggsave("degree_comparison.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
+
+save.image("mean/data/results_degree_comparison.RData")
