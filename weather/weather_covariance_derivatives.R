@@ -136,9 +136,24 @@ x.design.extended = c( x.design[ (144-add+1):144 ] - 1, x.design, x.design[1:add
 W = local_polynomial_weights(p, 0.3, p.eval, T, m = 2, del = 1, 
                              eval.type = "full", x.design.grid = x.design.extended) # watch out for evaluation
 
+N2_add = cbind(N1[, 1:3], # dates
+           rbind(NA, N1[-length(N1$JAHR), (147 - add + 1):147]), 
+           N1[, -(1:3)], 
+           rbind(N1[-1, 4:(4 + add -1)], NA))
+# remove days that have wrong values by the previous procedure
+N3_add = N2_add[!(((N2_add[,3] %in% 28:29) & (N2_add[,2] == 2)) |
+            (N2_add[,3] == 1) |
+            ((N2_add[,3] == 31) & (N2_add[,2] %in% c(1,3,5,7,8,10,12))) |
+            ((N2_add[,3] == 30) & (N2_add[,2] %in% c(4,6,9,11)))), ]
+# remove NA entries
+to_rm = apply(N3_add, 1, function(v){any(is.na(v))}) %>% which()
+N3_add = N3_add[-to_rm, ]
+sum(is.na(N3_add))
+
+
 g_hat = array(0, dim = c(p.eval, p.eval, 12))
 for ( m in 1:12) {
-  Y = N3[N3[,2] == m, -(1:3)] |>  
+  Y = N3_add[N3_add[,2] == m, -(1:3)] |>  
     observation_transformation()
   g_hat[,,m] = eval_weights(W, Y)[,,2]
 }
@@ -155,10 +170,10 @@ estimate_03dn[UP] = NA
 estimate_03up[!UP] = NA
 plot_ly() %>% 
   add_surface(x = ~ time, y = ~ time, z = estimate_03up, alpha = 0.9, colorscale = cs2, lighting = list(
-    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9
+    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9, showscale = F
   )) %>% 
   add_surface(x = ~ time, y = ~ time, z = estimate_03dn, alpha = 0.9, colorscale = cs2, lighting = list(
-    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9
+    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9, showscale = F
   )) %>% 
   layout(
     scene = list(
@@ -202,17 +217,20 @@ plot_ly() %>%
 
 #save: cov01_nov.png
 
-deriv_cov_weather_diag = tibble(x = rep(time, 2), 
-                                est = c(diag(g_hat[,,2]), diag(g_hat[,,3])), 
-                                deriv = gl(2, 72, labels = c("G10", "G01")))
-deriv_cov_weather_diag |> 
-  ggplot(aes( x = x, y = est, color = deriv, linetype = deriv)) + 
-  geom_line(linewidth = .9) +
-  deriv_est_theme + 
-  labs(y = NULL, x = "time", title = expression(Partial~derivatives~of~Gamma~on~the~diagonal) ) + 
-  scale_discrete_manual(
-    aesthetics = c("color", "linetype"),
-    values = c(2,4), 
-    name = "Deriv.",
-    labels = c(expression(italic(d)^{"(1,0)"}*Gamma), expression(italic(d)^{"(0,1)"}*Gamma))
-  ) 
+#deriv_cov_weather_diag = tibble(x = rep(time, 2), 
+ ##                               est = c(diag(g_hat[,,2]), diag(g_hat[,,3])), 
+  #                              deriv = gl(2, 72, labels = c("G10", "G01")))
+#deriv_cov_weather_diag |> 
+#  ggplot(aes( x = x, y = est, color = deriv, linetype = deriv)) + 
+#  geom_line(linewidth = .9) +
+#  deriv_est_theme + 
+#  labs(y = NULL, x = "time", title = expression(Partial~derivatives~of~Gamma~on~the~diagonal) ) + 
+#  scale_discrete_manual(
+#    aesthetics = c("color", "linetype"),
+#    values = c(2,4), 
+#    name = "Deriv.",
+#    labels = c(expression(italic(d)^{"(1,0)"}*Gamma), expression(italic(d)^{"(0,1)"}*Gamma))
+#  ) 
+
+rm(W, N0, N1, N2_add, N2, N3, N)
+save.image("weather/data/results_Figure_3_15.RData")
