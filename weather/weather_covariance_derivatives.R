@@ -115,17 +115,18 @@ final_est %>%
   ggplot(aes( x = as.POSIXct(time), y = value, color = g, linetype = g)) + 
   facet_wrap(name~., nrow = 2)  + 
   geom_line(linewidth = .9) +
-  labs(y = NULL, x = "time", title = expression(Partial~derivatives~of~Gamma~on~the~diagonal) ) + 
+  labs(y = NULL, x = NULL, title = expression(Partial~derivatives~of~Gamma~on~the~diagonal) ) + 
   scale_discrete_manual(
     aesthetics = c("color", "linetype"),
     values = c("G10" = 2,"G01" = 4), 
     name = "Deriv.",
-    labels = c("G10" = expression(italic(d)^{"(1,0)"}*Gamma), "G01" = expression(italic(d)^{"(0,1)"}*Gamma))
+    labels = c("G10" = expression(italic(d)^{"(1,0)"}*Gamma~phantom(0)), "G01" = expression(italic(d)^{"(0,1)"}*Gamma))
   ) +
   deriv_est_theme  + 
-  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") 
+  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M")  + 
+  theme(legend.position = "bottom")
 
-ggsave("weather/grafics/weather_part_deriv_gamma_diagonal_all_months.pdf", device = "pdf", width = 11, height = 5.5, units = "in")
+ggsave("weather/grafics/weather_part_deriv_gamma_diagonal_all_months.pdf", device = "pdf", width = 10, height = 6, units = "in")
 
 #### 3 dimensional plots ####
 ##### results ##### 

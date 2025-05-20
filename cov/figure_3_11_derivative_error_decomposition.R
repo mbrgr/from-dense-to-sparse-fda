@@ -80,6 +80,6 @@ err_dec_tib %>%
   geom_point() +
   facet_wrap(p ~., nrow = 1) + 
   my_theme
-ggsave("cov/grafics/error_decomp_cov_deriv_OU.pdf", device = "pdf", unit = "in", width = 10, height = 5.5)
+ggsave("cov/grafics/error_decomp_cov_deriv_OU.pdf", device = "pdf", unit = "in", width = 10, height = 4.5)
 
 save.image("cov/data/results_3_11.RData")

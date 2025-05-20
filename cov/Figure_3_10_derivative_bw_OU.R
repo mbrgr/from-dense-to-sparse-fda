@@ -60,7 +60,7 @@ ggplot(bw_comparison_tibble) +
   facet_wrap(n ~., nrow = 1) + 
   my_theme
 
-ggsave("cov/grafics/bw_comp_cov_deriv_OU.pdf", device = "pdf", width = 10, height = 5.5, units = "in")
+ggsave("cov/grafics/bw_comp_cov_deriv_OU.pdf", device = "pdf", width = 10, height = 4.5, units = "in")
 
 bw_comparison_tibble |> 
   group_by(n, p) |> 

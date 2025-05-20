@@ -65,7 +65,7 @@ N |>
   filter(MONAT == 1) |> 
   ggplot() +
   geom_line(aes(x = UHRZEIT, y = TT_10, group = JAHR*TAG, colour = JAHR), alpha = .6) + 
-  labs(y = "Temp. in C°", x = "hours", title = "Temp. in August", colour = "year") + 
+  labs(y = "Temp. in C°", x = "hours", title = "Temp. in January", colour = "year") + 
   my_theme
 ggsave("weather/grafics/january_temp_curves.pdf", device = "pdf", width = 5, height = 3.8, unit = "in")
 
@@ -251,14 +251,14 @@ sd_tibble |>
   ggplot(aes(x = time, y = sd, lty = h, col = h)) + 
   geom_line(linewidth = .8) + 
   lims(y = c(0.2, 6)) + 
-  labs(y = NULL, x = NULL) + 
+  labs(y = NULL, x = NULL, subtitle = expression(Estimation~of~the~standard~deviation)) + 
   theme(text = element_text(size = 18)) + 
   facet_wrap(.~month, nrow = 2) + 
   scale_linetype_manual(values = c(2,5,4), name = "h (min)") + 
   scale_color_manual(values = 1:3, name = "h (min)") + 
   scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") +
   theme(legend.position = 'bottom')
-ggsave("weather/grafics/sd_all_months.pdf", device = "pdf", unit = "in", width = 11, height = 5.5)
+ggsave("weather/grafics/sd_all_months.pdf", device = "pdf", unit = "in", width = 11, height = 6)
 
 rm(W, Wh01, Wh05)
 save.image("weather/data/weather_covariace_results.RData")
