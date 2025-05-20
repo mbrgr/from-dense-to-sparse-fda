@@ -112,8 +112,8 @@ final_est = est_per_month %>%
 
 ##### Figure 3.16 #####
 final_est %>% 
-  ggplot(aes( x = time, y = value, color = g, linetype = g)) + 
-  facet_wrap(name~.)  + 
+  ggplot(aes( x = as.POSIXct(time), y = value, color = g, linetype = g)) + 
+  facet_wrap(name~., nrow = 2)  + 
   geom_line(linewidth = .9) +
   labs(y = NULL, x = "time", title = expression(Partial~derivatives~of~Gamma~on~the~diagonal) ) + 
   scale_discrete_manual(
@@ -122,11 +122,16 @@ final_est %>%
     name = "Deriv.",
     labels = c("G10" = expression(italic(d)^{"(1,0)"}*Gamma), "G01" = expression(italic(d)^{"(0,1)"}*Gamma))
   ) +
-  scale_x_continuous(breaks = c(time[25], time[121]))
+  deriv_est_theme  + 
+  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") 
 
-ggsave("mean/grafics/weather_part_deriv_gamma_diagonal_all_months.pdf", device = "pdf", width = 9, height = 6, units = "in")
+ggsave("weather/grafics/weather_part_deriv_gamma_diagonal_all_months.pdf", device = "pdf", width = 11, height = 5.5, units = "in")
 
 #### 3 dimensional plots ####
+##### results ##### 
+# without weights
+load("weather/data/results_figure_3_15.RData")
+
 add = 44
 p.eval = 100
 p = 144 + 2*add
@@ -168,52 +173,58 @@ estimate_03up = g_hat[,,3]
 estimate_03dn = g_hat[,,3]
 estimate_03dn[UP] = NA
 estimate_03up[!UP] = NA
-plot_ly() %>% 
-  add_surface(x = ~ time, y = ~ time, z = estimate_03up, alpha = 0.9, colorscale = cs2, lighting = list(
-    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9, showscale = F
+
+##### Figure 3.15 (a) #####
+figure_3_15a = plot_ly() %>% 
+  add_surface(x = ~ time, y = ~ time, z = estimate_03up, alpha = 0.9, colorscale = cs2, showscale = F, 
+              lighting = list(
+    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9
   )) %>% 
-  add_surface(x = ~ time, y = ~ time, z = estimate_03dn, alpha = 0.9, colorscale = cs2, lighting = list(
-    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9, showscale = F
-  )) %>% 
-  layout(
+  add_surface(x = ~ time, y = ~ time, z = estimate_03dn, alpha = 0.9, colorscale = cs2, showscale = F, 
+              lighting = list(
+    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9
+  )) |> layout(
     scene = list(
-      xaxis = list(title = "time"),
-      yaxis = list(title = "time"),
-      zaxis = list(title = "")
-    )
-  )%>%
-  layout(
-    scene = list(
-      aspectratio = list(x = 1, y = 1, z = 1)  # Controls axis scaling
-    )
+      camera = list(eye = list(x = -2, y = -1.2, z = 0.5)),# controls the angle
+      xaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      yaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      zaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)), 
+      aspectratio = list(x = 1, y = 1, z = 1)),
+    showlegend = F
   )
-# save: cov01_march.png
+figure_3_15a
+
+save_image(figure_3_15a, 
+           file = "weather/grafics/cov01_march.pdf", 
+           width = 700, height = 700)
 
 UP = upper.tri(g_hat[,,11], diag = T)
 estimate_11up = g_hat[,,11]
 estimate_11dn = g_hat[,,11]
 estimate_11dn[UP] = NA
 estimate_11up[!UP] = NA
-plot_ly() %>% 
-  add_surface(x = ~ time, y = ~ time, z = estimate_11up, alpha = 0.9, lighting = list(
-    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9
-  )) %>% 
-  add_surface(x = ~ time, y = ~ time, z = estimate_11dn, alpha = 0.9, lighting = list(
-    ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9
-  )) %>% 
-  layout(
-    scene = list(
-      xaxis = list(title = "time"),
-      yaxis = list(title = "time"),
-      zaxis = list(title = "")
-    )
-  )  %>%
-  layout(
-    scene = list(
-      aspectratio = list(x = 1, y = 1, z = 1)  # Controls axis scaling
-    )
-  )
 
+##### Figure 3.15 (b) #####
+figure_3_15b = plot_ly() %>% 
+  add_surface(x = ~ time, y = ~ time, z = estimate_11up, alpha = 0.9, colorscale = cs2, showscale = F,
+              lighting = list(ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9)
+              ) %>% 
+  add_surface(x = ~ time, y = ~ time, z = estimate_11dn, alpha = 0.9, colorscale = cs2, showscale = F, 
+              lighting = list(ambient = 0.7, diffuse = 0.8, specular = 0.1, roughness = 0.9 )
+              ) |> layout(
+    scene = list(
+      camera = list(eye = list(x = -2, y = -1.2, z = 0.5)),# controls the angle
+      xaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      yaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)),
+      zaxis = list(title = list(text = "", font = list(size = 24)), tickfont = list(size = 14)), 
+      aspectratio = list(x = 1, y = 1, z = 1)),
+    showlegend = F
+  )
+figure_3_15b
+
+save_image(figure_3_15b, 
+           file = "weather/grafics/cov01_nov.pdf", 
+           width = 700, height = 700)
 
 #save: cov01_nov.png
 
@@ -234,3 +245,10 @@ plot_ly() %>%
 
 rm(W, N0, N1, N2_add, N2, N3, N)
 save.image("weather/data/results_Figure_3_15.RData")
+
+rm(list = setdiff(ls(), 
+                  c("figure_3_15a", "figure_3_15b", 
+                    "time", 
+                    "estimate_11up", "estimate_11dn", 
+                    "estimate_03up", "estimate_03dn")))
+save.image("weather/data/figure_3_15.RData")

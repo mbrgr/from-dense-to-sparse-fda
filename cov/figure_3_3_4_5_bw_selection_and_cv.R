@@ -7,7 +7,7 @@ my_theme = theme_grey(base_size = 15) +
   theme(plot.title = element_text(size = 14))
 
 #### results ####
-load("cov/data/results_3_345.RData")
+load("cov/data/bw_comp_OU.RData")
 
 #  Figures 3.4, 3.5 and 3.6
 # further Figure B.2
@@ -74,7 +74,7 @@ bw_comparison_tbl |>
   lims(y = c(0, .95)) +
   facet_wrap(n~., nrow = 1)  + 
   my_theme
-ggsave("cov/grafics/cov_optimal_bw_various_n.pdf", device = "pdf", width = 9, height = 6, units = "in")
+ggsave("cov/grafics/cov_optimal_bw_various_n.pdf", device = "pdf", width = 9, height = 4, units = "in")
 
 min_h_tibble = bw_comparison_tbl |>
   group_by(n, p) |> 
@@ -129,4 +129,4 @@ ggsave("cov/grafics/cov_5fcv_bw_n400_table.pdf", device = "pdf", width = 10, hei
 five_fold_tbl_n400 %>% 
   summarise(.by = p, mean(h))
 
-save_image("cov/data/results_3_345.RData")
+save_image("cov/data/bw_comp_OU.RData")

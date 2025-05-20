@@ -19,3 +19,8 @@ load("cov/data/figure_3_14.RData")
 
 saveWidget(figure_3_14a, "docs/figure314a.html", selfcontained = T)
 saveWidget(figure_3_14b, "docs/figure314b.html", selfcontained = T)
+
+load("weather/data/figure_3_15.RData")
+
+saveWidget(figure_3_15a, "docs/figure315a.html", selfcontained = T)
+saveWidget(figure_3_15b, "docs/figure315b.html", selfcontained = T)

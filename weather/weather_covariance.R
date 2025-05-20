@@ -253,11 +253,12 @@ sd_tibble |>
   lims(y = c(0.2, 6)) + 
   labs(y = NULL, x = NULL) + 
   theme(text = element_text(size = 18)) + 
-  facet_wrap(.~month, nrow = 3) + 
+  facet_wrap(.~month, nrow = 2) + 
   scale_linetype_manual(values = c(2,5,4), name = "h (min)") + 
   scale_color_manual(values = 1:3, name = "h (min)") + 
-  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M")
-ggsave("weather/grafics/sd_all_months.pdf", device = "pdf", unit = "in", width = 9, height = 6)
+  scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") +
+  theme(legend.position = 'bottom')
+ggsave("weather/grafics/sd_all_months.pdf", device = "pdf", unit = "in", width = 11, height = 5.5)
 
 rm(W, Wh01, Wh05)
 save.image("weather/data/weather_covariace_results.RData")
