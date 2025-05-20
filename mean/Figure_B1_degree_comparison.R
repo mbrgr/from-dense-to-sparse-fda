@@ -70,6 +70,6 @@ comp_tibble |>
   deriv_est_theme
 
 
-ggsave("degree_comparison.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
+ggsave("cov/grafics/degree_comparison.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
 save.image("mean/data/results_degree_comparison.RData")
