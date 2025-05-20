@@ -42,13 +42,13 @@ erg_deg_2_df = data.frame(sup.err = unlist(erg_deg2), p =
                           h = unlist(H)
 ) 
 
-###### Figure B.1 (a) ######
+###### Figure B.2 (a) ######
 # Local quadratic estimator bandwidth comparison 
 
-Figure_B1a = ggplot(erg_deg_2_df, aes(x = h, y = sup.err, color = p, pch = p)) + 
+Figure_B2a = ggplot(erg_deg_2_df, aes(x = h, y = sup.err, color = p, pch = p)) + 
   geom_point() + labs(subtitle = "n = 600") + lims(y = c(0.5, 20)) + 
   deriv_est_theme
-Figure_B1a
+Figure_B2a
 
 ggsave("mean/grafics/derivative_bandwidth_comparison_quad_full_interval.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
@@ -71,12 +71,12 @@ erg_deg_3_df = data.frame(sup.err = unlist(erg_deg3), p =
                           h = unlist(H)
 ) 
 
-###### Figure B.1 (b) ######
+###### Figure B.2 (b) ######
 # Local cubic estimator bandwidth comparison 
-Figure_B1b = ggplot(erg_deg_3_df, aes(x = h, y = sup.err, color = p, pch = p)) + 
+Figure_B2b = ggplot(erg_deg_3_df, aes(x = h, y = sup.err, color = p, pch = p)) + 
   geom_point() + lims(y = c(0.5, 20)) + labs(subtitle = "n = 600")+ 
   deriv_est_theme
-Figure_B1b
+Figure_B2b
 
 ggsave("mean/grafics/derivative_bandwidth_comparison_cubic_full_interval.pdf", device = "pdf", width = 5, height = 3.8, units = "in")
 
