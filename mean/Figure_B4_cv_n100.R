@@ -102,7 +102,7 @@ ggsave("cov/grafics/5fold_cv_n100.pdf",
        device = "pdf", 
        unit = "in", 
        width = 10, 
-       height = 5.5)
+       height = 4)
 
 five_fold_tbl %>% 
   summarise(.by = p, mean(h)) 
