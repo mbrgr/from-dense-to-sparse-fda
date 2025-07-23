@@ -100,7 +100,7 @@ cbind(deriv_tibble, rep(time, each = 1728/144)) |>
   mutate(time = as.POSIXct(time)) |>  
   ggplot(aes(x = time, y = deriv, col = month, linetype = month)) +
   geom_line() +
-  labs(x = "time", y = NULL, subtitle = "Derivatives of mean temperatur") + 
+  labs(x = "time", y = NULL, subtitle = "Derivatives of mean temperature") + 
   scale_colour_manual(values = farben) + 
   scale_linetype_manual(values = c(2,3,4,4,4,1:3,5,5,5,1)) + 
   scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") + 
@@ -114,7 +114,7 @@ rbind(deriv_tibble, deriv_tibble |> mutate(x_temp = x_temp +1)) |>
   mutate(month = as.factor(month)) |> 
   ggplot(aes(x = x_temp, y = deriv, col = month, linetype = month)) +
   geom_line() +
-  labs(x = "time", y = NULL, subtitle = "Derivatives of mean temperatur") + 
+  labs(x = "time", y = NULL, subtitle = "Derivatives of mean temperature") + 
   scale_colour_manual(values = farben) + 
   scale_linetype_manual(values = c(2,3,4,4,4,1:3,5,5,5,1)) 
 

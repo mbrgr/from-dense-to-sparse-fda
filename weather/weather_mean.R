@@ -211,25 +211,39 @@ temp_estimation = temp_estimation |>
 
 ggplot() + 
   geom_point(data = temp_estimation |> 
-               filter(month %in% selected_month) , aes(x = time, y = avg_temp), color = "orange", pch = 3, size = .5) +
+               filter(month %in% selected_month) , 
+             aes(x = time, y = avg_temp), 
+             color = "orange", pch = 3, size = .9) +
   geom_point(data = temp_estimation[seq(4, 1728, 6), ] |> 
-               filter(month %in% selected_month) , aes(x = time, y = avg_temp), color = "blue", pch = 3, size = .5) +
+               filter(month %in% selected_month) , 
+             aes(x = time, y = avg_temp), 
+             color = "blue", pch = 3, size = .9) +
   geom_point(data = temp_estimation[seq(7, 1728, 12), ] |> 
-               filter(month %in% selected_month) , aes(x = time, y = avg_temp), color = "green", pch = 3, size = .5) +
+               filter(month %in% selected_month) , 
+             aes(x = time, y = avg_temp), 
+             color = "red", pch = 3, size = .9) +
   geom_ribbon(data = temp_estimation |> 
-                filter(month %in% selected_month) , aes(x = time, ymin = fnf_lo, ymax = fnf_up), alpha = .4, color = "grey") + 
+                filter(month %in% selected_month) , 
+              aes(x = time, ymin = fnf_lo, ymax = fnf_up), 
+              alpha = .4, color = "grey") + 
   geom_line(data = temp_estimation |> 
-              filter(month %in% selected_month) , aes(x = time, y = est), color = "orange") + 
+              filter(month %in% selected_month) , 
+            aes(x = time, y = est), color = "orange", alpha = .8, 
+            linewidth = .8) + 
   geom_line(data = temp_estimation |> 
-              filter(month %in% selected_month) , aes(x = time, y = one_hour_est), color = "blue", linetype = 2) + 
+              filter(month %in% selected_month) , 
+            aes(x = time, y = one_hour_est), 
+            color = "blue", alpha = .8, linetype = 2, linewidth = .8) + 
   geom_line(data = temp_estimation |> 
-              filter(month %in% selected_month) , aes(x = time, y = two_hour_est), color = "green", linetype = 3) + 
+              filter(month %in% selected_month) ,
+            aes(x = time, y = two_hour_est), 
+            color = "red", alpha = .8, linetype = 4, linewidth = .8) + 
   labs(y = "°C") + 
   facet_wrap(month ~ .) +
   scale_x_datetime(date_breaks = "8 hours", date_labels = "%H:%M") + 
   deriv_est_theme
 
-ggsave("weather/grafics/weather_fnf_jan_july.pdf", device = "pdf", unit = "in", height = 7, width = 9)
+ggsave("weather/grafics/weather_fnf_jan_july.pdf", device = "pdf", unit = "in", height = 6, width = 8)
 
 temp_estimation |> 
   filter(one_hour_est > fnf_up | one_hour_est < fnf_lo) |> 
